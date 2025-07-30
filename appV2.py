@@ -89,10 +89,10 @@ if st.button("🔁 Get Recommendations"):
     else:
         st.error(f"❌ Sorry, we couldn't find **{song_name_input.title()}** in our database. Try another song.")
 
-# --- FOOTER ---
-st.markdown("""
-    <hr style="margin-top:50px;"/>
-    <div style='text-align:center; color:gray; font-size:14px;'>
-        Made with ❤️ using Streamlit | © 2025 Hybrid Music AI
-    </div>
-""", unsafe_allow_html=True)
+# # --- FOOTER ---
+# st.markdown("""
+#     <hr style="margin-top:50px;"/>
+#     <div style='text-align:center; color:gray; font-size:14px;'>
+#         Made with ❤️ using Streamlit | © 2025 Hybrid Music AI
+#     </div>
+# """, unsafe_allow_html=True)
