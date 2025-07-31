@@ -11,17 +11,17 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 # Copy all required data files at once
-COPY ./data/collab_filtered_data.csv \
-     ./data/interaction_matrix.npz \
-     ./data/track_ids.npy \
-     ./data/cleaned_data.csv \
-     ./data/transformed_data.npz \
-     ./data/transformed_hybrid_data.npz \
+COPY ./collab_filtered_data.csv \
+     ./interaction_matrix.npz \
+     ./track_ids.npy \
+     ./cleaned_data.csv \
+     ./transformed_data.npz \
+     ./transformed_hybrid_data.npz \
      ./data/
 
 
 # Copy all required Python scripts at once
-COPY app.py \
+COPY hybrid_app.py \
      collaborative_filtering.py \
      content_based_filtering.py \
      hybrid_recommendations.py \
