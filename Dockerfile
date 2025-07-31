@@ -1,26 +1,22 @@
-# set up the base image
-FROM python:3.11
+FROM python:3.9-slim
 
-# set the working directory
-WORKDIR /app/
+WORKDIR /hybrid_app
 
-# copy the requirements file to workdir
+# Copy requirements first for better caching
 COPY requirements.txt .
 
-# install the requirements
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy all required data files at once
-COPY ./collab_filtered_data.csv \
-     ./interaction_matrix.npz \
-     ./track_ids.npy \
-     ./cleaned_data.csv \
-     ./transformed_data.npz \
-     ./transformed_hybrid_data.npz \
-     ./data/
+# Copy data files
+COPY collab_filtered_data.csv \
+     interaction_matrix.npz \
+     track_ids.npy \
+     cleaned_data.csv \
+     transformed_data.npz \
+     transformed_hybrid_data.npz \
+     data/
 
-
-# Copy all required Python scripts at once
+# Copy Python scripts
 COPY hybrid_app.py \
      collaborative_filtering.py \
      content_based_filtering.py \
@@ -29,8 +25,6 @@ COPY hybrid_app.py \
      transform_filtered_data.py \
      ./
 
-# expose the port on the container
 EXPOSE 8000
 
-# run the streamlit app
-CMD [ "streamlit", "run", "hybrid_app.py", "--server.port", "8000", "--server.address", "0.0.0.0"]
+CMD ["streamlit", "run", "hybrid_app.py", "--server.port", "8000", "--server.address", "0.0.0.0"]

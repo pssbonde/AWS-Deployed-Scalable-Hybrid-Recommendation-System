@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 # ✅ Set the working directory (change this path as needed)
-os.chdir("/app")
+os.chdir("D:/Project")
 
 # ✅ Define the data path
 DATA_PATH = "music_info.csv"
