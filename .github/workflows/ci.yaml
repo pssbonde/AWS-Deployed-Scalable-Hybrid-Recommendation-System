@@ -1,6 +1,7 @@
 name: CI-CD
 
-on: push
+on: 
+  push:
 
 jobs:
   CI:
@@ -12,8 +13,14 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
           cache: 'pip' 
+
+      # Install system dependencies needed for some pip packages
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential python3-dev
 
       - name: Install Packages
         run: |
@@ -31,7 +38,7 @@ jobs:
         run: |
           dvc pull
 
-      - name: Run Appllication
+      - name: Run Application
         run: |
           nohup streamlit run hybrid_app.py --server.port 8000 &
           sleep 30 
@@ -39,22 +46,17 @@ jobs:
       - name: Test App
         run: |
           pytest test_app.py
-      
+       
       - name: Stop Streamlit app
         run: |
           pkill -f "streamlit run"
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
+      # Login to Amazon ECR
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
   
+      # Build and push Docker image
       - name: Build, tag, and push docker image to Amazon ECR
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -68,21 +70,21 @@ jobs:
       - name: Zip files for deployment
         if: success()
         run: |
-            zip -r deployment.zip appspec.yml deploy/scripts/install_dependencies.sh deploy/scripts/start_docker.sh
+          zip -r deployment.zip appspec.yml deploy/scripts/install_dependencies.sh deploy/scripts/start_docker.sh
 
       # Upload the ZIP file to S3
       - name: Upload ZIP to S3
         if: success()
         run: |
-            aws s3 cp deployment.zip s3://hybridrecsysdeploymentbucket/deployment.zip
+          aws s3 cp deployment.zip s3://hybridrecsysdeploymentbucket/deployment.zip
 
       # Deploy to AWS CodeDeploy using the uploaded ZIP file
       - name: Deploy to AWS CodeDeploy
         if: success()
         run: |
-            aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-            aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            aws deploy create-deployment \
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws deploy create-deployment \
             --application-name hybridrecommendersystem \
             --deployment-config-name CodeDeployDefault.AllAtOnce \
             --deployment-group-name hybridrecsysdeploymentgroup \
