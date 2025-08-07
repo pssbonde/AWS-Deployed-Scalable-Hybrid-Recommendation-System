@@ -1,14 +1,7 @@
 import pandas as pd
-import os
-import os
-from pathlib import Path
 
-# ✅ Set the working directory (change this path as needed)
-os.chdir(Path(__file__).parent.resolve())
 
-# ✅ Define the data path
-DATA_PATH = "music_info.csv"
-data = pd.read_csv(DATA_PATH)
+DATA_PATH = "data/Music Info.csv"
 
 def clean_data(data):
     """
@@ -19,68 +12,62 @@ def clean_data(data):
     4. Converts the 'name', 'artist', and 'tags' columns to lowercase.
 
     Parameters:
-        data (pd.DataFrame): The input DataFrame containing the raw music data.
+    data (pd.DataFrame): The input DataFrame containing the data to be cleaned.
 
     Returns:
-        pd.DataFrame: A cleaned DataFrame.
+    pd.DataFrame: The cleaned DataFrame.
     """
     return (
         data
-        .drop_duplicates(subset='spotify_id')
-        .drop(columns=['genre', 'spotify_id'])
-        .fillna({'tags': 'no_tags'})
+        .drop_duplicates(subset="track_id")
+        .drop(columns=["genre","spotify_id"])
+        .fillna({"tags":"no_tags"})
         .assign(
-            name=lambda x: x['name'].str.lower(),
-            artist=lambda x: x['artist'].str.lower(),
-            tags=lambda x: x['tags'].str.lower()
+            name=lambda x: x["name"].str.lower(),
+            artist=lambda x: x["artist"].str.lower(),
+            tags=lambda x: x["tags"].str.lower()
         )
         .reset_index(drop=True)
     )
-
+    
+    
 def data_for_content_filtering(data):
     """
-    Prepares the data for content-based filtering by removing unnecessary columns.
+    Cleans the input DataFrame by dropping specific columns.
 
-    This function removes the columns 'track_id', 'name', and 'spotify_preview_url'.
+    This function takes a DataFrame and removes the columns "track_id", "name",
+    and "spotify_preview_url". It is intended to prepare the data for content based
+    filtering by removing unnecessary features.
 
     Parameters:
-        data (pd.DataFrame): The input DataFrame containing music information.
+    data (pandas.DataFrame): The input DataFrame containing songs information.
 
     Returns:
-        pd.DataFrame: A DataFrame with the specified columns removed.
+    pandas.DataFrame: A DataFrame with the specified columns removed.
     """
-    return data.drop(columns=['track_id', 'name', 'spotify_preview_url'])
-
+    return (
+        data
+        .drop(columns=["track_id","name","spotify_preview_url"])
+    )
+    
+    
 def main(data_path):
     """
-    Main function to read, clean, and save the cleaned music dataset.
-
-    Steps performed:
-    1. Loads the CSV data from the specified path.
-    2. Cleans the dataset using `clean_data()`.
-    3. Saves the cleaned dataset to 'cleaned_data.csv'.
-
+    Main function to load, clean, and save data.
     Parameters:
-        data_path (str): Path to the input CSV file.
-
+    data_path (str): The file path to the raw data CSV file.
     Returns:
-        None
+    None
     """
-    try:
-        # Load the data
-        data = pd.read_csv(data_path)
+    # load the data
+    data = pd.read_csv(data_path)
+    
+    # perform data cleaning
+    cleaned_data = clean_data(data)
+    
+    # saved cleaned data
+    cleaned_data.to_csv("data/cleaned_data.csv",index=False)
+    
 
-        # Perform data cleaning
-        cleaned_data = clean_data(data)
-
-        # Save cleaned data to a new CSV file
-        cleaned_data.to_csv("cleaned_data.csv", index=False)
-        print("✅ Cleaned data saved to 'cleaned_data.csv'")
-    except FileNotFoundError:
-        print(f"❌ File not found: {data_path}")
-    except Exception as e:
-        print(f"❌ An error occurred: {e}")
-
-# ✅ Run only when this script is executed directly
 if __name__ == "__main__":
     main(DATA_PATH)

@@ -1,4 +1,4 @@
 [core]
     remote = myremote
 ['remote "myremote"']
-    url = s3://hybrid-music-recomm-sys-remote
+    url = s3://hybrid-remote/data

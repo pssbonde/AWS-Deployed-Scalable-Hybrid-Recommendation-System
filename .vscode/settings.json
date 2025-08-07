@@ -1,6 +1,0 @@
-{
-  "yaml.schemas": {
-    "https://raw.githubusercontent.com/iterative/dvcyaml-schema/master/schema.json": "file:///d%3A/Project/dvc.yaml"
-  },
-  "python.defaultInterpreterPath": "C:\\Users\\pssbo\\AppData\\Local\\Programs\\Python\\Python39\\python.exe"
-}
