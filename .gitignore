@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -175,11 +174,13 @@ cython_debug/
 .venv/
 
 /transformer.joblib
-=======
-/track_ids.npy
-/collab_filtered_data.csv
-/interaction_matrix.npz
-/transformed_hybrid_data.npz
-/music_info.csv
-/User Listening History.csv
->>>>>>> c45b3d4f7ecd254462d31acd8a3f3b4a05bce535
+
+# Database files
+music.db
+
+# Log files
+streamlit.log
+uvicorn.log
+
+# Test cache
+.pytest_cache/
